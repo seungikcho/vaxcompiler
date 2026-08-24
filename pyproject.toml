@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vaxcompiler"
+version = "0.1.0"
+description = "Patient-specific compilation of tumor mutations into optimized multi-antigen mRNA vaccine architectures."
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+authors = [
+    {name = "Seungik Cho"}
+]
+
+dependencies = [
+    "numpy>=1.26",
+    "pandas>=2.0",
+    "scipy>=1.11"
+]
+
+[project.optional-dependencies]
+mhc = [
+    "mhcflurry>=2.2.1"
+]
+
+dev = [
+    "pytest>=8",
+    "build>=1.2",
+    "twine>=5"
+]
+
+[project.scripts]
+vaxcompiler = "vaxcompiler.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
