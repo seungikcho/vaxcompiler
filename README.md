@@ -1,22 +1,62 @@
 # VaxCompiler
 
-**Patient-specific compilation of tumor mutations into optimized multi-antigen mRNA vaccine architectures.**
+**Compile patient-specific tumor mutations into optimized multi-antigen mRNA vaccine architectures.**
 
-VaxCompiler is open-source research software for computational personalized cancer vaccine design.
+VaxCompiler is an open-source research toolkit for computational personalized cancer vaccine design.
 
-Rather than treating mutation selection, transcript partitioning, and antigen ordering as independent steps, VaxCompiler formulates vaccine architecture design as a constrained combinatorial compilation problem.
+Instead of treating neoantigen selection, transcript partitioning, and antigen ordering as separate steps, VaxCompiler formulates vaccine construction as a **patient-specific constrained compilation problem**.
 
-## Status
+Given candidate tumor mutations and precomputed antigen-presentation factors, VaxCompiler can:
 
-Research software. Not intended for clinical use.
+- select which mutation targets to include,
+- partition them across multiple mRNA transcripts,
+- determine the order of antigens within each transcript,
+- minimize predicted junctional presentation risk,
+- preserve a user-specified fraction of antigen-selection utility,
+- and compute the patient-specific utility–risk frontier.
 
-Current antigen-presentation and antigen-utility objectives are computational surrogates and must not be interpreted as validated clinical immunogenicity or vaccine efficacy.
+> VaxCompiler is research software and is not intended for clinical use.
 
-## Development installation
+---
 
-    pip install -e .
+## Overview
 
-## CLI
+<p align="center">
+  <img src="docs/vaxcompiler_overview.png" width="100%">
+</p>
 
-    vaxcompiler --version
-    vaxcompiler --help
+### Why VaxCompiler?
+
+Personalized cancer vaccine pipelines often begin by ranking candidate neoantigens independently.
+
+However, a collection of individually promising antigens does not automatically form a good multi-antigen vaccine construct.
+
+When antigen sequences are concatenated:
+
+- neighboring antigens can create new junctional peptides,
+- reversing the order of two antigens can substantially change predicted junction risk,
+- splitting the same antigens across multiple transcripts can change the feasible design space,
+- and including additional targets can introduce trade-offs between antigen coverage and construct-level risk.
+
+VaxCompiler treats these decisions jointly.
+
+```text
+Patient-specific mutation candidates
+                |
+                v
+       Local antigen factors
+      /                     \
+junction-risk factors   intended-context factors
+      \                     /
+                v
+       VaxCompiler optimizer
+                |
+        +-------+-------+
+        |       |       |
+      select  partition  order
+      targets  mRNAs    antigens
+        |       |       |
+        +-------+-------+
+                |
+                v
+   Optimized multi-mRNA architecture
